@@ -1,4 +1,4 @@
-# Lessons Learned from GuardianAI v1
+# Lessons Learned from ResonanceAI v1
 
 **Document Purpose**: Document critical lessons from the failed first attempt
 **Audience**: Claude (implementation agent) and future development
@@ -10,7 +10,7 @@
 
 **The Problem**:
 
-- Started with ambitious vision of full GuardianAI system
+- Started with ambitious vision of full ResonanceAI system
 - Tried to build everything at once instead of MVP approach
 - Added features before core functionality was solid
 - Created complex abstractions without proven need
@@ -323,7 +323,7 @@ function calculateRelevance(file: FileInfo, task: string): number {
 ```typescript
 // Example: Test indexing with actual project
 describe('IndexingService', () => {
-	it('works with guardian-ai-mvp project', async () => {
+	it('works with resonance-ai-mvp project', async () => {
 		const index = await indexingService.indexProject('./src');
 		expect(index.files.size).toBeGreaterThan(0);
 		expect(index.dependencies.has('src/services/IndexingService.ts')).toBe(
@@ -352,7 +352,7 @@ describe('IndexingService', () => {
 
 **Testing Strategy**:
 
-- Use GuardianAI MVP's own codebase as primary test case
+- Use ResonanceAI MVP's own codebase as primary test case
 - Test with SvelTUI project for second validation
 - Include edge cases from real projects (large files, complex dependencies)
 - Validate that generated briefs actually help Claude

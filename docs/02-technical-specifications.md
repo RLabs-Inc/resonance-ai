@@ -1,4 +1,4 @@
-# Technical Specifications for GuardianAI MVP
+# Technical Specifications for ResonanceAI MVP
 
 **Document Purpose**: Detailed technical specifications for implementation
 **Audience**: Claude (implementation agent)
@@ -7,10 +7,10 @@
 ## Project Structure
 
 ```
-guardian-ai-mvp/
+resonance-ai-mvp/
 ├── package.json
 ├── tsconfig.json
-├── guardian-ai.config.yaml
+├── resonance-ai.config.yaml
 ├── README.md
 │
 ├── src/
@@ -524,7 +524,7 @@ export function createCLI() {
 	const program = new Command();
 
 	program
-		.name('guardian-ai')
+		.name('resonance-ai')
 		.description('AI-powered development assistant')
 		.version('0.1.0');
 
@@ -580,11 +580,11 @@ export function createCLI() {
 ## Configuration Schema
 
 ```yaml
-# guardian-ai.config.yaml
+# resonance-ai.config.yaml
 
 # Project settings
 project:
-  name: 'guardian-ai-mvp'
+  name: 'resonance-ai-mvp'
   rootPath: './src'
   exclude:
     - 'node_modules'
@@ -650,7 +650,7 @@ performance:
 ```typescript
 // src/core/errors.ts
 
-export abstract class GuardianError extends Error {
+export abstract class ResonanceError extends Error {
 	abstract readonly code: string;
 	abstract readonly category: string;
 
@@ -664,27 +664,27 @@ export abstract class GuardianError extends Error {
 	}
 }
 
-export class IndexingError extends GuardianError {
+export class IndexingError extends ResonanceError {
 	readonly code = 'INDEXING_ERROR';
 	readonly category = 'indexing';
 }
 
-export class ContextError extends GuardianError {
+export class ContextError extends ResonanceError {
 	readonly code = 'CONTEXT_ERROR';
 	readonly category = 'context';
 }
 
-export class BriefingError extends GuardianError {
+export class BriefingError extends ResonanceError {
 	readonly code = 'BRIEFING_ERROR';
 	readonly category = 'briefing';
 }
 
-export class ConfigurationError extends GuardianError {
+export class ConfigurationError extends ResonanceError {
 	readonly code = 'CONFIG_ERROR';
 	readonly category = 'configuration';
 }
 
-export class FileSystemError extends GuardianError {
+export class FileSystemError extends ResonanceError {
 	readonly code = 'FILESYSTEM_ERROR';
 	readonly category = 'filesystem';
 }
@@ -692,7 +692,7 @@ export class FileSystemError extends GuardianError {
 // Error handler
 export class ErrorHandler {
 	static handle(error: Error): void {
-		if (error instanceof GuardianError) {
+		if (error instanceof ResonanceError) {
 			console.error(`[${error.category}] ${error.message}`);
 			if (error.context) {
 				console.error('Context:', JSON.stringify(error.context, null, 2));

@@ -1,475 +1,483 @@
 /**
- * File watcher for GuardianAI MVP
- * 
+ * File watcher for ResonanceAI MVP
+ *
  * Monitors file system changes and triggers incremental index updates
  * with debouncing and intelligent change detection.
  */
 
-import * as fs from 'fs'
-import { EventBus } from '../../core/events.js'
-import { FileSystemError } from '../../core/errors.js'
-import { FileUtils } from '../../utils/file-utils.js'
-import type { IndexingService } from './IndexingService.js'
+import * as fs from 'fs';
+import {EventBus} from '../../core/events.js';
+import {FileSystemError} from '../../core/errors.js';
+import {FileUtils} from '../../utils/file-utils.js';
+import type {IndexingService} from './IndexingService.js';
 
 export interface WatchOptions {
-  debounceMs: number
-  excludePatterns: string[]
-  includePatterns: string[]
-  recursive: boolean
-  followSymlinks: boolean
+	debounceMs: number;
+	excludePatterns: string[];
+	includePatterns: string[];
+	recursive: boolean;
+	followSymlinks: boolean;
 }
 
 export interface FileChangeEvent {
-  type: 'added' | 'modified' | 'deleted' | 'renamed'
-  filePath: string
-  oldPath?: string
-  timestamp: Date
+	type: 'added' | 'modified' | 'deleted' | 'renamed';
+	filePath: string;
+	oldPath?: string;
+	timestamp: Date;
 }
 
 export interface WatcherStats {
-  isWatching: boolean
-  watchedPaths: string[]
-  eventsReceived: number
-  eventsProcessed: number
-  lastChange: Date | null
-  debounceActive: boolean
+	isWatching: boolean;
+	watchedPaths: string[];
+	eventsReceived: number;
+	eventsProcessed: number;
+	lastChange: Date | null;
+	debounceActive: boolean;
 }
 
 /**
  * File system watcher with intelligent change detection and debouncing
  */
 export class FileWatcher {
-  private eventBus: EventBus
-  private indexingService: IndexingService
-  private options: WatchOptions
-  private watchers: Map<string, fs.FSWatcher> = new Map()
-  private pendingChanges: Map<string, FileChangeEvent> = new Map()
-  private debounceTimer: NodeJS.Timeout | null = null
-  private stats: WatcherStats
-  private isWatching = false
+	private eventBus: EventBus;
+	private indexingService: IndexingService;
+	private options: WatchOptions;
+	private watchers: Map<string, fs.FSWatcher> = new Map();
+	private pendingChanges: Map<string, FileChangeEvent> = new Map();
+	private debounceTimer: NodeJS.Timeout | null = null;
+	private stats: WatcherStats;
+	private isWatching = false;
 
-  constructor(
-    indexingService: IndexingService,
-    eventBus: EventBus,
-    options: Partial<WatchOptions> = {}
-  ) {
-    this.indexingService = indexingService
-    this.eventBus = eventBus
-    this.options = {
-      debounceMs: 500,
-      excludePatterns: [
-        '**/node_modules/**',
-        '**/dist/**',
-        '**/build/**',
-        '**/.git/**',
-        '**/coverage/**',
-        '**/*.log',
-        '**/.DS_Store'
-      ],
-      includePatterns: [],
-      recursive: true,
-      followSymlinks: false,
-      ...options
-    }
+	constructor(
+		indexingService: IndexingService,
+		eventBus: EventBus,
+		options: Partial<WatchOptions> = {},
+	) {
+		this.indexingService = indexingService;
+		this.eventBus = eventBus;
+		this.options = {
+			debounceMs: 500,
+			excludePatterns: [
+				'**/node_modules/**',
+				'**/dist/**',
+				'**/build/**',
+				'**/.git/**',
+				'**/coverage/**',
+				'**/*.log',
+				'**/.DS_Store',
+			],
+			includePatterns: [],
+			recursive: true,
+			followSymlinks: false,
+			...options,
+		};
 
-    this.stats = {
-      isWatching: false,
-      watchedPaths: [],
-      eventsReceived: 0,
-      eventsProcessed: 0,
-      lastChange: null,
-      debounceActive: false
-    }
-  }
+		this.stats = {
+			isWatching: false,
+			watchedPaths: [],
+			eventsReceived: 0,
+			eventsProcessed: 0,
+			lastChange: null,
+			debounceActive: false,
+		};
+	}
 
-  /**
-   * Start watching a directory for changes
-   */
-  async startWatching(rootPath: string): Promise<void> {
-    if (this.isWatching) {
-      throw new FileSystemError('FileWatcher is already watching')
-    }
+	/**
+	 * Start watching a directory for changes
+	 */
+	async startWatching(rootPath: string): Promise<void> {
+		if (this.isWatching) {
+			throw new FileSystemError('FileWatcher is already watching');
+		}
 
-    const emitter = this.eventBus.createScope('FileWatcher')
+		const emitter = this.eventBus.createScope('FileWatcher');
 
-    try {
-      await emitter.emit('watcher.started', { rootPath })
+		try {
+			await emitter.emit('watcher.started', {rootPath});
 
-      // Validate path exists
-      const exists = await FileUtils.exists(rootPath)
-      if (!exists) {
-        throw new FileSystemError(`Watch path does not exist: ${rootPath}`)
-      }
+			// Validate path exists
+			const exists = await FileUtils.exists(rootPath);
+			if (!exists) {
+				throw new FileSystemError(`Watch path does not exist: ${rootPath}`);
+			}
 
-      // Start watching the root directory
-      await this.watchDirectory(rootPath)
+			// Start watching the root directory
+			await this.watchDirectory(rootPath);
 
-      this.isWatching = true
-      this.stats.isWatching = true
-      this.stats.watchedPaths = [rootPath]
+			this.isWatching = true;
+			this.stats.isWatching = true;
+			this.stats.watchedPaths = [rootPath];
 
-      await emitter.emit('watcher.watching', { 
-        rootPath, 
-        options: this.options 
-      })
+			await emitter.emit('watcher.watching', {
+				rootPath,
+				options: this.options,
+			});
+		} catch (error) {
+			await emitter.emit('watcher.failed', {
+				rootPath,
+				error: error instanceof Error ? error : new Error(String(error)),
+			});
 
-    } catch (error) {
-      await emitter.emit('watcher.failed', { 
-        rootPath, 
-        error: error instanceof Error ? error : new Error(String(error))
-      })
-      
-      throw new FileSystemError(
-        `Failed to start watching: ${rootPath}`,
-        { rootPath },
-        error instanceof Error ? error : undefined
-      )
-    }
-  }
+			throw new FileSystemError(
+				`Failed to start watching: ${rootPath}`,
+				{rootPath},
+				error instanceof Error ? error : undefined,
+			);
+		}
+	}
 
-  /**
-   * Stop watching for file changes
-   */
-  async stopWatching(): Promise<void> {
-    if (!this.isWatching) {
-      return
-    }
+	/**
+	 * Stop watching for file changes
+	 */
+	async stopWatching(): Promise<void> {
+		if (!this.isWatching) {
+			return;
+		}
 
-    const emitter = this.eventBus.createScope('FileWatcher')
+		const emitter = this.eventBus.createScope('FileWatcher');
 
-    try {
-      // Clear debounce timer
-      if (this.debounceTimer) {
-        clearTimeout(this.debounceTimer)
-        this.debounceTimer = null
-      }
+		try {
+			// Clear debounce timer
+			if (this.debounceTimer) {
+				clearTimeout(this.debounceTimer);
+				this.debounceTimer = null;
+			}
 
-      // Process any pending changes before stopping
-      if (this.pendingChanges.size > 0) {
-        await this.processPendingChanges()
-      }
+			// Process any pending changes before stopping
+			if (this.pendingChanges.size > 0) {
+				await this.processPendingChanges();
+			}
 
-      // Close all watchers
-      for (const [path, watcher] of this.watchers) {
-        watcher.close()
-        console.log(`Stopped watching: ${path}`)
-      }
+			// Close all watchers
+			for (const [path, watcher] of this.watchers) {
+				watcher.close();
+				console.log(`Stopped watching: ${path}`);
+			}
 
-      this.watchers.clear()
-      this.pendingChanges.clear()
-      this.isWatching = false
-      this.stats.isWatching = false
-      this.stats.watchedPaths = []
+			this.watchers.clear();
+			this.pendingChanges.clear();
+			this.isWatching = false;
+			this.stats.isWatching = false;
+			this.stats.watchedPaths = [];
 
-      await emitter.emit('watcher.stopped', {})
+			await emitter.emit('watcher.stopped', {});
+		} catch (error) {
+			await emitter.emit('watcher.error', {
+				error: error instanceof Error ? error : new Error(String(error)),
+			});
 
-    } catch (error) {
-      await emitter.emit('watcher.error', { 
-        error: error instanceof Error ? error : new Error(String(error))
-      })
-      
-      throw new FileSystemError(
-        'Failed to stop file watcher',
-        {},
-        error instanceof Error ? error : undefined
-      )
-    }
-  }
+			throw new FileSystemError(
+				'Failed to stop file watcher',
+				{},
+				error instanceof Error ? error : undefined,
+			);
+		}
+	}
 
-  /**
-   * Watch a specific directory
-   */
-  private async watchDirectory(dirPath: string): Promise<void> {
-    try {
-      const watcher = fs.watch(
-        dirPath, 
-        { 
-          recursive: this.options.recursive,
-          persistent: true
-        },
-        (eventType, filename) => {
-          this.handleFileChange(eventType, filename, dirPath)
-        }
-      )
+	/**
+	 * Watch a specific directory
+	 */
+	private async watchDirectory(dirPath: string): Promise<void> {
+		try {
+			const watcher = fs.watch(
+				dirPath,
+				{
+					recursive: this.options.recursive,
+					persistent: true,
+				},
+				(eventType, filename) => {
+					this.handleFileChange(eventType, filename, dirPath);
+				},
+			);
 
-      watcher.on('error', (error) => {
-        console.error(`Watch error for ${dirPath}:`, error)
-        this.eventBus.createScope('FileWatcher').emit('watcher.error', { 
-          path: dirPath, 
-          error 
-        })
-      })
+			watcher.on('error', error => {
+				console.error(`Watch error for ${dirPath}:`, error);
+				this.eventBus.createScope('FileWatcher').emit('watcher.error', {
+					path: dirPath,
+					error,
+				});
+			});
 
-      this.watchers.set(dirPath, watcher)
-      console.log(`Started watching: ${dirPath}`)
+			this.watchers.set(dirPath, watcher);
+			console.log(`Started watching: ${dirPath}`);
+		} catch (error) {
+			throw new FileSystemError(
+				`Failed to watch directory: ${dirPath}`,
+				{dirPath},
+				error instanceof Error ? error : undefined,
+			);
+		}
+	}
 
-    } catch (error) {
-      throw new FileSystemError(
-        `Failed to watch directory: ${dirPath}`,
-        { dirPath },
-        error instanceof Error ? error : undefined
-      )
-    }
-  }
+	/**
+	 * Handle individual file change events
+	 */
+	private handleFileChange(
+		eventType: string,
+		filename: string | null,
+		watchedDir: string,
+	): void {
+		if (!filename) return;
 
-  /**
-   * Handle individual file change events
-   */
-  private handleFileChange(
-    eventType: string, 
-    filename: string | null, 
-    watchedDir: string
-  ): void {
-    if (!filename) return
+		const filePath = FileUtils.resolvePath(watchedDir, filename);
 
-    const filePath = FileUtils.resolvePath(watchedDir, filename)
-    
-    // Check if file should be ignored
-    if (this.shouldIgnoreFile(filePath)) {
-      return
-    }
+		// Check if file should be ignored
+		if (this.shouldIgnoreFile(filePath)) {
+			return;
+		}
 
-    this.stats.eventsReceived++
-    this.stats.lastChange = new Date()
+		this.stats.eventsReceived++;
+		this.stats.lastChange = new Date();
 
-    // Determine change type
-    const changeType = this.determineChangeType(eventType, filePath)
-    
-    // Create change event
-    const changeEvent: FileChangeEvent = {
-      type: changeType,
-      filePath: FileUtils.normalizePath(filePath),
-      timestamp: new Date()
-    }
+		// Determine change type
+		const changeType = this.determineChangeType(eventType, filePath);
 
-    // Add to pending changes (overwrites previous change for same file)
-    this.pendingChanges.set(filePath, changeEvent)
+		// Create change event
+		const changeEvent: FileChangeEvent = {
+			type: changeType,
+			filePath: FileUtils.normalizePath(filePath),
+			timestamp: new Date(),
+		};
 
-    // Debounce the processing
-    this.debounceProcessing()
-  }
+		// Add to pending changes (overwrites previous change for same file)
+		this.pendingChanges.set(filePath, changeEvent);
 
-  /**
-   * Determine the type of file change
-   */
-  private determineChangeType(eventType: string, filePath: string): FileChangeEvent['type'] {
-    // This is a simplified change detection
-    // More sophisticated detection could be implemented
-    
-    switch (eventType) {
-      case 'rename':
-        // Check if file still exists to distinguish between rename and delete
-        return fs.existsSync(filePath) ? 'added' : 'deleted'
-      case 'change':
-        return 'modified'
-      default:
-        return 'modified'
-    }
-  }
+		// Debounce the processing
+		this.debounceProcessing();
+	}
 
-  /**
-   * Check if a file should be ignored based on patterns
-   */
-  private shouldIgnoreFile(filePath: string): boolean {
-    const relativePath = filePath.replace(/^\/+/, '')
-    
-    // Check exclude patterns
-    for (const pattern of this.options.excludePatterns) {
-      if (FileUtils.matchesPattern(relativePath, pattern)) {
-        return true
-      }
-    }
+	/**
+	 * Determine the type of file change
+	 */
+	private determineChangeType(
+		eventType: string,
+		filePath: string,
+	): FileChangeEvent['type'] {
+		// This is a simplified change detection
+		// More sophisticated detection could be implemented
 
-    // Check include patterns (if any specified)
-    if (this.options.includePatterns.length > 0) {
-      for (const pattern of this.options.includePatterns) {
-        if (FileUtils.matchesPattern(relativePath, pattern)) {
-          return false
-        }
-      }
-      return true // Not in include patterns
-    }
+		switch (eventType) {
+			case 'rename':
+				// Check if file still exists to distinguish between rename and delete
+				return fs.existsSync(filePath) ? 'added' : 'deleted';
+			case 'change':
+				return 'modified';
+			default:
+				return 'modified';
+		}
+	}
 
-    // Check if it's a source file
-    const extension = FileUtils.getExtension(filePath)
-    const sourceExtensions = ['.ts', '.tsx', '.js', '.jsx', '.json', '.md', '.yaml', '.yml']
-    
-    return !sourceExtensions.includes(extension)
-  }
+	/**
+	 * Check if a file should be ignored based on patterns
+	 */
+	private shouldIgnoreFile(filePath: string): boolean {
+		const relativePath = filePath.replace(/^\/+/, '');
 
-  /**
-   * Debounce change processing to avoid excessive updates
-   */
-  private debounceProcessing(): void {
-    // Clear existing timer
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer)
-    }
+		// Check exclude patterns
+		for (const pattern of this.options.excludePatterns) {
+			if (FileUtils.matchesPattern(relativePath, pattern)) {
+				return true;
+			}
+		}
 
-    this.stats.debounceActive = true
+		// Check include patterns (if any specified)
+		if (this.options.includePatterns.length > 0) {
+			for (const pattern of this.options.includePatterns) {
+				if (FileUtils.matchesPattern(relativePath, pattern)) {
+					return false;
+				}
+			}
+			return true; // Not in include patterns
+		}
 
-    // Set new timer
-    this.debounceTimer = setTimeout(async () => {
-      this.stats.debounceActive = false
-      await this.processPendingChanges()
-    }, this.options.debounceMs)
-  }
+		// Check if it's a source file
+		const extension = FileUtils.getExtension(filePath);
+		const sourceExtensions = [
+			'.ts',
+			'.tsx',
+			'.js',
+			'.jsx',
+			'.json',
+			'.md',
+			'.yaml',
+			'.yml',
+		];
 
-  /**
-   * Process all pending file changes
-   */
-  private async processPendingChanges(): Promise<void> {
-    if (this.pendingChanges.size === 0) {
-      return
-    }
+		return !sourceExtensions.includes(extension);
+	}
 
-    const emitter = this.eventBus.createScope('FileWatcher')
-    const changes = Array.from(this.pendingChanges.values())
-    
-    try {
-      await emitter.emit('watcher.changes.processing', { 
-        changes: changes.length 
-      })
+	/**
+	 * Debounce change processing to avoid excessive updates
+	 */
+	private debounceProcessing(): void {
+		// Clear existing timer
+		if (this.debounceTimer) {
+			clearTimeout(this.debounceTimer);
+		}
 
-      // Group changes by type
-      const changedFiles = new Set<string>()
-      const deletedFiles = new Set<string>()
+		this.stats.debounceActive = true;
 
-      for (const change of changes) {
-        if (change.type === 'deleted') {
-          deletedFiles.add(change.filePath)
-        } else {
-          changedFiles.add(change.filePath)
-        }
-      }
+		// Set new timer
+		this.debounceTimer = setTimeout(async () => {
+			this.stats.debounceActive = false;
+			await this.processPendingChanges();
+		}, this.options.debounceMs);
+	}
 
-      // Process deletions first
-      if (deletedFiles.size > 0) {
-        await this.indexingService.updateIndex(Array.from(deletedFiles))
-      }
+	/**
+	 * Process all pending file changes
+	 */
+	private async processPendingChanges(): Promise<void> {
+		if (this.pendingChanges.size === 0) {
+			return;
+		}
 
-      // Process additions and modifications
-      if (changedFiles.size > 0) {
-        await this.indexingService.updateIndex(Array.from(changedFiles))
-      }
+		const emitter = this.eventBus.createScope('FileWatcher');
+		const changes = Array.from(this.pendingChanges.values());
 
-      this.stats.eventsProcessed += changes.length
-      this.pendingChanges.clear()
+		try {
+			await emitter.emit('watcher.changes.processing', {
+				changes: changes.length,
+			});
 
-      await emitter.emit('watcher.changes.processed', { 
-        changes: changes.length,
-        added: changedFiles.size,
-        deleted: deletedFiles.size
-      })
+			// Group changes by type
+			const changedFiles = new Set<string>();
+			const deletedFiles = new Set<string>();
 
-    } catch (error) {
-      await emitter.emit('watcher.changes.failed', { 
-        changes: changes.length,
-        error: error instanceof Error ? error : new Error(String(error))
-      })
+			for (const change of changes) {
+				if (change.type === 'deleted') {
+					deletedFiles.add(change.filePath);
+				} else {
+					changedFiles.add(change.filePath);
+				}
+			}
 
-      // Don't clear pending changes on error - they'll be retried
-      console.error('Failed to process file changes:', error)
-    }
-  }
+			// Process deletions first
+			if (deletedFiles.size > 0) {
+				await this.indexingService.updateIndex(Array.from(deletedFiles));
+			}
 
-  /**
-   * Force processing of pending changes (useful for testing)
-   */
-  async flushChanges(): Promise<void> {
-    if (this.debounceTimer) {
-      clearTimeout(this.debounceTimer)
-      this.debounceTimer = null
-    }
-    
-    await this.processPendingChanges()
-  }
+			// Process additions and modifications
+			if (changedFiles.size > 0) {
+				await this.indexingService.updateIndex(Array.from(changedFiles));
+			}
 
-  /**
-   * Get current watcher statistics
-   */
-  getStats(): WatcherStats {
-    return { ...this.stats }
-  }
+			this.stats.eventsProcessed += changes.length;
+			this.pendingChanges.clear();
 
-  /**
-   * Check if currently watching
-   */
-  isCurrentlyWatching(): boolean {
-    return this.isWatching
-  }
+			await emitter.emit('watcher.changes.processed', {
+				changes: changes.length,
+				added: changedFiles.size,
+				deleted: deletedFiles.size,
+			});
+		} catch (error) {
+			await emitter.emit('watcher.changes.failed', {
+				changes: changes.length,
+				error: error instanceof Error ? error : new Error(String(error)),
+			});
 
-  /**
-   * Get list of pending changes
-   */
-  getPendingChanges(): FileChangeEvent[] {
-    return Array.from(this.pendingChanges.values())
-  }
+			// Don't clear pending changes on error - they'll be retried
+			console.error('Failed to process file changes:', error);
+		}
+	}
 
-  /**
-   * Add a path to exclusion patterns
-   */
-  addExcludePattern(pattern: string): void {
-    if (!this.options.excludePatterns.includes(pattern)) {
-      this.options.excludePatterns.push(pattern)
-    }
-  }
+	/**
+	 * Force processing of pending changes (useful for testing)
+	 */
+	async flushChanges(): Promise<void> {
+		if (this.debounceTimer) {
+			clearTimeout(this.debounceTimer);
+			this.debounceTimer = null;
+		}
 
-  /**
-   * Remove a path from exclusion patterns
-   */
-  removeExcludePattern(pattern: string): void {
-    const index = this.options.excludePatterns.indexOf(pattern)
-    if (index >= 0) {
-      this.options.excludePatterns.splice(index, 1)
-    }
-  }
+		await this.processPendingChanges();
+	}
 
-  /**
-   * Update debounce timing
-   */
-  setDebounceMs(ms: number): void {
-    this.options.debounceMs = Math.max(50, ms) // Minimum 50ms
-  }
+	/**
+	 * Get current watcher statistics
+	 */
+	getStats(): WatcherStats {
+		return {...this.stats};
+	}
 
-  /**
-   * Get current options
-   */
-  getOptions(): WatchOptions {
-    return { ...this.options }
-  }
+	/**
+	 * Check if currently watching
+	 */
+	isCurrentlyWatching(): boolean {
+		return this.isWatching;
+	}
 
-  /**
-   * Watch an additional directory
-   */
-  async addWatchPath(dirPath: string): Promise<void> {
-    if (!this.isWatching) {
-      throw new FileSystemError('FileWatcher is not currently watching')
-    }
+	/**
+	 * Get list of pending changes
+	 */
+	getPendingChanges(): FileChangeEvent[] {
+		return Array.from(this.pendingChanges.values());
+	}
 
-    if (this.watchers.has(dirPath)) {
-      return // Already watching this path
-    }
+	/**
+	 * Add a path to exclusion patterns
+	 */
+	addExcludePattern(pattern: string): void {
+		if (!this.options.excludePatterns.includes(pattern)) {
+			this.options.excludePatterns.push(pattern);
+		}
+	}
 
-    await this.watchDirectory(dirPath)
-    this.stats.watchedPaths.push(dirPath)
-  }
+	/**
+	 * Remove a path from exclusion patterns
+	 */
+	removeExcludePattern(pattern: string): void {
+		const index = this.options.excludePatterns.indexOf(pattern);
+		if (index >= 0) {
+			this.options.excludePatterns.splice(index, 1);
+		}
+	}
 
-  /**
-   * Stop watching a specific directory
-   */
-  async removeWatchPath(dirPath: string): Promise<void> {
-    const watcher = this.watchers.get(dirPath)
-    if (!watcher) {
-      return // Not watching this path
-    }
+	/**
+	 * Update debounce timing
+	 */
+	setDebounceMs(ms: number): void {
+		this.options.debounceMs = Math.max(50, ms); // Minimum 50ms
+	}
 
-    watcher.close()
-    this.watchers.delete(dirPath)
-    
-    const index = this.stats.watchedPaths.indexOf(dirPath)
-    if (index >= 0) {
-      this.stats.watchedPaths.splice(index, 1)
-    }
-  }
+	/**
+	 * Get current options
+	 */
+	getOptions(): WatchOptions {
+		return {...this.options};
+	}
+
+	/**
+	 * Watch an additional directory
+	 */
+	async addWatchPath(dirPath: string): Promise<void> {
+		if (!this.isWatching) {
+			throw new FileSystemError('FileWatcher is not currently watching');
+		}
+
+		if (this.watchers.has(dirPath)) {
+			return; // Already watching this path
+		}
+
+		await this.watchDirectory(dirPath);
+		this.stats.watchedPaths.push(dirPath);
+	}
+
+	/**
+	 * Stop watching a specific directory
+	 */
+	async removeWatchPath(dirPath: string): Promise<void> {
+		const watcher = this.watchers.get(dirPath);
+		if (!watcher) {
+			return; // Not watching this path
+		}
+
+		watcher.close();
+		this.watchers.delete(dirPath);
+
+		const index = this.stats.watchedPaths.indexOf(dirPath);
+		if (index >= 0) {
+			this.stats.watchedPaths.splice(index, 1);
+		}
+	}
 }

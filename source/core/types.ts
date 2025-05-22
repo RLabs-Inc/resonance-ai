@@ -1,5 +1,5 @@
 /**
- * Core type definitions for GuardianAI MVP
+ * Core type definitions for ResonanceAI MVP
  *
  * This file defines all the fundamental types used throughout the application.
  * These types are designed specifically for Claude's cognitive patterns and needs.
@@ -230,7 +230,6 @@ export interface TaskDefinition {
 	constraints: string[];
 }
 
-
 export interface CodeSection {
 	type: string;
 	name: string;
@@ -384,7 +383,7 @@ export interface CoverageTarget {
 }
 
 // Configuration types
-export interface GuardianConfig {
+export interface ResonanceConfig {
 	project: ProjectConfig;
 	indexing: IndexingConfig;
 	context: ContextConfig;
@@ -481,14 +480,14 @@ export interface SearchMetadata {
 }
 
 // Event types for the event bus
-export interface GuardianEvent {
+export interface ResonanceEvent {
 	type: string;
 	timestamp: Date;
 	source: string;
 	data: any;
 }
 
-export interface IndexingEvent extends GuardianEvent {
+export interface IndexingEvent extends ResonanceEvent {
 	type:
 		| 'indexing.started'
 		| 'indexing.progress'
@@ -502,7 +501,7 @@ export interface IndexingEvent extends GuardianEvent {
 	};
 }
 
-export interface ContextEvent extends GuardianEvent {
+export interface ContextEvent extends ResonanceEvent {
 	type: 'context.started' | 'context.completed' | 'context.failed';
 	data: {
 		task?: TaskDefinition;
@@ -512,7 +511,7 @@ export interface ContextEvent extends GuardianEvent {
 	};
 }
 
-export interface BriefingEvent extends GuardianEvent {
+export interface BriefingEvent extends ResonanceEvent {
 	type: 'briefing.started' | 'briefing.completed' | 'briefing.failed';
 	data: {
 		task?: TaskDefinition;
@@ -601,7 +600,7 @@ export interface ExtractionCriteria {
 	interfaces?: string[];
 	exports?: string[];
 	keywords?: string[];
-	lineRanges?: Array<{ start: number; end: number }>;
+	lineRanges?: Array<{start: number; end: number}>;
 }
 
 // Language parser types

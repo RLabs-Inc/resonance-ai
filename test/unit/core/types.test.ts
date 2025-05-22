@@ -4,13 +4,13 @@
 
 import test from 'ava';
 import type {
-	GuardianConfig,
+	ResonanceConfig,
 	FileInfo,
 	ProjectIndex,
 } from '../../../source/core/types.js';
 
-test('GuardianConfig type structure', t => {
-	const config: GuardianConfig = {
+test('ResonanceConfig type structure', t => {
+	const config: ResonanceConfig = {
 		project: {
 			name: 'test-project',
 			rootPath: './test',

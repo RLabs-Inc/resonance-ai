@@ -1,5 +1,5 @@
 /**
- * Configuration management system for GuardianAI MVP
+ * Configuration management system for ResonanceAI MVP
  *
  * Provides hierarchical configuration loading with support for YAML, JSON,
  * and environment variables. Designed for Claude's preferences with sensible defaults.
@@ -8,17 +8,17 @@
 import * as fs from 'fs/promises';
 import * as path from 'path';
 import * as yaml from 'yaml';
-import {GuardianConfig} from './types.js';
+import {ResonanceConfig} from './types.js';
 import {ConfigurationError} from './errors.js';
 
 export class ConfigurationManager {
-	private config: GuardianConfig | null = null;
+	private config: ResonanceConfig | null = null;
 	private configPath: string | null = null;
 
 	/**
 	 * Load configuration from multiple sources with proper hierarchy
 	 */
-	async loadConfig(projectRoot?: string): Promise<GuardianConfig> {
+	async loadConfig(projectRoot?: string): Promise<ResonanceConfig> {
 		const configSources = await this.findConfigFiles(projectRoot);
 
 		// Start with default configuration
@@ -52,7 +52,7 @@ export class ConfigurationManager {
 	/**
 	 * Get the current configuration
 	 */
-	getConfig(): GuardianConfig {
+	getConfig(): ResonanceConfig {
 		if (!this.config) {
 			throw new ConfigurationError(
 				'Configuration not loaded. Call loadConfig() first.',
@@ -69,7 +69,8 @@ export class ConfigurationManager {
 			throw new ConfigurationError('No configuration to save');
 		}
 
-		const targetPath = filePath || this.configPath || 'guardian-ai.config.yaml';
+		const targetPath =
+			filePath || this.configPath || 'resonance-ai.config.yaml';
 
 		try {
 			const configYaml = yaml.stringify(this.config, {
@@ -90,7 +91,7 @@ export class ConfigurationManager {
 	/**
 	 * Update configuration values
 	 */
-	updateConfig(updates: Partial<GuardianConfig>): GuardianConfig {
+	updateConfig(updates: Partial<ResonanceConfig>): ResonanceConfig {
 		if (!this.config) {
 			throw new ConfigurationError('Configuration not loaded');
 		}
@@ -106,18 +107,18 @@ export class ConfigurationManager {
 	private async findConfigFiles(projectRoot?: string): Promise<string[]> {
 		const configFiles: string[] = [];
 		const configNames = [
-			'guardian-ai.config.yaml',
-			'guardian-ai.config.yml',
-			'guardian-ai.config.json',
-			'.guardian-ai.yaml',
-			'.guardian-ai.yml',
-			'.guardian-ai.json',
+			'resonance-ai.config.yaml',
+			'resonance-ai.config.yml',
+			'resonance-ai.config.json',
+			'.resonance-ai.yaml',
+			'.resonance-ai.yml',
+			'.resonance-ai.json',
 		];
 
 		const searchPaths = [
 			projectRoot || process.cwd(),
 			path.join(process.cwd(), '.config'),
-			path.join(require('os').homedir(), '.config', 'guardian-ai'),
+			path.join(require('os').homedir(), '.config', 'resonance-ai'),
 			path.dirname(require.main?.filename || __filename),
 		];
 
@@ -141,7 +142,7 @@ export class ConfigurationManager {
 	 */
 	private async loadConfigFile(
 		filePath: string,
-	): Promise<Partial<GuardianConfig>> {
+	): Promise<Partial<ResonanceConfig>> {
 		try {
 			const content = await fs.readFile(filePath, 'utf8');
 			const ext = path.extname(filePath).toLowerCase();
@@ -170,10 +171,10 @@ export class ConfigurationManager {
 	/**
 	 * Get default configuration optimized for Claude
 	 */
-	private getDefaultConfig(): GuardianConfig {
+	private getDefaultConfig(): ResonanceConfig {
 		return {
 			project: {
-				name: 'guardian-ai-project',
+				name: 'resonance-ai-project',
 				rootPath: './source',
 				exclude: [
 					'node_modules',
@@ -244,9 +245,9 @@ export class ConfigurationManager {
 	 * Deep merge two configuration objects
 	 */
 	private mergeConfigs(
-		base: GuardianConfig,
-		override: Partial<GuardianConfig>,
-	): GuardianConfig {
+		base: ResonanceConfig,
+		override: Partial<ResonanceConfig>,
+	): ResonanceConfig {
 		const result = {...base};
 
 		for (const [key, value] of Object.entries(override)) {
@@ -256,8 +257,8 @@ export class ConfigurationManager {
 
 			if (typeof value === 'object' && !Array.isArray(value)) {
 				// Deep merge objects
-				result[key as keyof GuardianConfig] = {
-					...(result[key as keyof GuardianConfig] as any),
+				result[key as keyof ResonanceConfig] = {
+					...(result[key as keyof ResonanceConfig] as any),
 					...value,
 				};
 			} else {
@@ -272,14 +273,14 @@ export class ConfigurationManager {
 	/**
 	 * Apply environment variable overrides
 	 */
-	private applyEnvironmentOverrides(config: GuardianConfig): GuardianConfig {
+	private applyEnvironmentOverrides(config: ResonanceConfig): ResonanceConfig {
 		const envMappings = {
-			GUARDIAN_AI_PROJECT_ROOT: 'project.rootPath',
-			GUARDIAN_AI_MAX_FILES: 'context.maxFiles',
-			GUARDIAN_AI_MAX_FILE_SIZE: 'indexing.maxFileSize',
-			GUARDIAN_AI_THEME: 'interface.theme',
-			GUARDIAN_AI_VERBOSE: 'interface.verbose',
-			GUARDIAN_AI_DEBOUNCE_MS: 'indexing.debounceMs',
+			RESONANCE_AI_PROJECT_ROOT: 'project.rootPath',
+			RESONANCE_AI_MAX_FILES: 'context.maxFiles',
+			RESONANCE_AI_MAX_FILE_SIZE: 'indexing.maxFileSize',
+			RESONANCE_AI_THEME: 'interface.theme',
+			RESONANCE_AI_VERBOSE: 'interface.verbose',
+			RESONANCE_AI_DEBOUNCE_MS: 'indexing.debounceMs',
 		};
 
 		const result = {...config};
@@ -344,7 +345,7 @@ export class ConfigurationManager {
 	/**
 	 * Validate configuration values
 	 */
-	private validateConfig(config: GuardianConfig): void {
+	private validateConfig(config: ResonanceConfig): void {
 		const errors: string[] = [];
 
 		// Project validation
@@ -408,13 +409,13 @@ export function getConfigManager(): ConfigurationManager {
  */
 export async function loadConfig(
 	projectRoot?: string,
-): Promise<GuardianConfig> {
+): Promise<ResonanceConfig> {
 	return getConfigManager().loadConfig(projectRoot);
 }
 
 /**
  * Get current configuration (convenience function)
  */
-export function getConfig(): GuardianConfig {
+export function getConfig(): ResonanceConfig {
 	return getConfigManager().getConfig();
 }

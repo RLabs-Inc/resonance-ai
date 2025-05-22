@@ -1,4 +1,4 @@
-# Architecture Decisions for GuardianAI MVP
+# Architecture Decisions for ResonanceAI MVP
 
 **Document Purpose**: Core architectural choices that will guide the entire implementation
 **Audience**: Claude (implementation agent)
@@ -306,15 +306,15 @@ All errors include:
 ### 1. Hierarchical Configuration
 
 1. **Default configuration** (built into the tool)
-2. **Global configuration** (~/.guardian-ai/config.yaml)
-3. **Project configuration** (./guardian-ai.config.yaml)
-4. **Environment variables** (GUARDIAN*AI*\*)
+2. **Global configuration** (~/.resonance-ai/config.yaml)
+3. **Project configuration** (./resonance-ai.config.yaml)
+4. **Environment variables** (RESONANCE*AI*\*)
 5. **Command line arguments** (highest priority)
 
 ### 2. Configuration Schema
 
 ```yaml
-# guardian-ai.config.yaml
+# resonance-ai.config.yaml
 project:
   name: 'my-project'
   rootPath: './src'

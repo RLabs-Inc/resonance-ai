@@ -1,5 +1,5 @@
 /**
- * Hash and checksum utilities for GuardianAI MVP
+ * Hash and checksum utilities for ResonanceAI MVP
  *
  * Provides efficient hashing functions for file change detection and content identification.
  */

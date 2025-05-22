@@ -4,14 +4,14 @@
 
 import test from 'ava';
 import {
-	GuardianError,
+	ResonanceError,
 	ConfigurationError,
 	IndexingError,
 	ErrorHandler,
 	ErrorUtils,
 } from '../../../source/core/errors.js';
 
-test('GuardianError includes context and cause', t => {
+test('ResonanceError includes context and cause', t => {
 	const cause = new Error('Original error');
 	const context = {file: 'test.ts', line: 42};
 
@@ -24,7 +24,7 @@ test('GuardianError includes context and cause', t => {
 	t.is(error.cause, cause);
 });
 
-test('GuardianError toJSON serializes properly', t => {
+test('ResonanceError toJSON serializes properly', t => {
 	const error = new IndexingError('Index failed', {project: 'test'});
 	const json = error.toJSON();
 
@@ -35,7 +35,7 @@ test('GuardianError toJSON serializes properly', t => {
 	t.deepEqual(json.context, {project: 'test'});
 });
 
-test('GuardianError toString formats properly', t => {
+test('ResonanceError toString formats properly', t => {
 	const cause = new Error('Root cause');
 	const error = new ConfigurationError(
 		'Failed to load config',

@@ -12,7 +12,7 @@ test('ConfigurationManager creates default config', async t => {
 	// Since we don't have config files, it should use defaults
 	const config = await configManager.loadConfig();
 
-	t.is(config.project.name, 'guardian-ai-project');
+	t.is(config.project.name, 'resonance-ai-project');
 	t.is(config.project.rootPath, './source');
 	t.true(config.project.exclude.includes('node_modules'));
 	t.is(config.indexing.maxFileSize, 1000000);
@@ -68,7 +68,7 @@ test('ConfigurationManager merges configs', async t => {
 
 test('ConfigurationManager handles environment overrides', async t => {
 	// Set environment variable
-	process.env['GUARDIAN_AI_MAX_FILES'] = '50';
+	process.env['RESONANCE_AI_MAX_FILES'] = '50';
 
 	const configManager = new ConfigurationManager();
 	const config = await configManager.loadConfig();
@@ -76,5 +76,5 @@ test('ConfigurationManager handles environment overrides', async t => {
 	t.is(config.context.maxFiles, 50);
 
 	// Clean up
-	delete process.env['GUARDIAN_AI_MAX_FILES'];
+	delete process.env['RESONANCE_AI_MAX_FILES'];
 });

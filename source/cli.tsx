@@ -7,13 +7,13 @@ import App from './app.js';
 const cli = meow(
 	`
 	Usage
-	  $ GuardianAI
+	  $ ResonanceAI
 
 	Options
 		--name  Your name
 
 	Examples
-	  $ GuardianAI --name=Jane
+	  $ ResonanceAI --name=Jane
 	  Hello, Jane
 `,
 	{

@@ -1,24 +1,24 @@
 /**
- * Event system for GuardianAI MVP
+ * Event system for ResonanceAI MVP
  *
  * Provides a type-safe event bus for communication between services.
  * Designed for Claude's needs with proper error handling and async support.
  */
 
 import {
-	GuardianEvent,
+	ResonanceEvent,
 	IndexingEvent,
 	ContextEvent,
 	BriefingEvent,
 } from './types.js';
 
-export type EventHandler<T extends GuardianEvent = GuardianEvent> = (
+export type EventHandler<T extends ResonanceEvent = ResonanceEvent> = (
 	event: T,
 ) => Promise<void> | void;
 
 export interface EventBusConfig {
 	maxListeners: number;
-	errorHandler?: (error: Error, event: GuardianEvent) => void;
+	errorHandler?: (error: Error, event: ResonanceEvent) => void;
 	enableLogging: boolean;
 }
 
@@ -37,7 +37,7 @@ export class EventBus {
 	/**
 	 * Emit an event to all registered listeners
 	 */
-	async emit<T extends GuardianEvent>(event: T): Promise<void> {
+	async emit<T extends ResonanceEvent>(event: T): Promise<void> {
 		const eventType = event.type;
 		const handlers = this.listeners.get(eventType) || [];
 
@@ -83,7 +83,7 @@ export class EventBus {
 	/**
 	 * Register an event listener
 	 */
-	on<T extends GuardianEvent>(
+	on<T extends ResonanceEvent>(
 		eventType: string,
 		handler: EventHandler<T>,
 	): void {
@@ -109,7 +109,7 @@ export class EventBus {
 	/**
 	 * Register a one-time event listener
 	 */
-	once<T extends GuardianEvent>(
+	once<T extends ResonanceEvent>(
 		eventType: string,
 		handler: EventHandler<T>,
 	): void {
@@ -124,7 +124,7 @@ export class EventBus {
 	/**
 	 * Remove an event listener
 	 */
-	off<T extends GuardianEvent>(
+	off<T extends ResonanceEvent>(
 		eventType: string,
 		handler: EventHandler<T>,
 	): void {
@@ -182,7 +182,7 @@ export class EventBus {
 	/**
 	 * Wait for a specific event to be emitted
 	 */
-	waitFor<T extends GuardianEvent>(
+	waitFor<T extends ResonanceEvent>(
 		eventType: string,
 		timeout?: number,
 	): Promise<T> {
@@ -211,7 +211,7 @@ export class EventBus {
 	/**
 	 * Handle errors from event handlers
 	 */
-	private handleError(error: Error, event: GuardianEvent): void {
+	private handleError(error: Error, event: ResonanceEvent): void {
 		if (this.config.errorHandler) {
 			try {
 				this.config.errorHandler(error, event);
@@ -241,11 +241,11 @@ export class EventBus {
 export class ScopedEventEmitter {
 	constructor(private eventBus: EventBus, private source: string) {}
 
-	async emit<T extends GuardianEvent>(
+	async emit<T extends ResonanceEvent>(
 		eventType: string,
 		data: T['data'],
 	): Promise<void> {
-		const event: GuardianEvent = {
+		const event: ResonanceEvent = {
 			type: eventType,
 			timestamp: new Date(),
 			source: this.source,
@@ -255,28 +255,28 @@ export class ScopedEventEmitter {
 		await this.eventBus.emit(event as T);
 	}
 
-	on<T extends GuardianEvent>(
+	on<T extends ResonanceEvent>(
 		eventType: string,
 		handler: EventHandler<T>,
 	): void {
 		this.eventBus.on(eventType, handler);
 	}
 
-	once<T extends GuardianEvent>(
+	once<T extends ResonanceEvent>(
 		eventType: string,
 		handler: EventHandler<T>,
 	): void {
 		this.eventBus.once(eventType, handler);
 	}
 
-	off<T extends GuardianEvent>(
+	off<T extends ResonanceEvent>(
 		eventType: string,
 		handler: EventHandler<T>,
 	): void {
 		this.eventBus.off(eventType, handler);
 	}
 
-	waitFor<T extends GuardianEvent>(
+	waitFor<T extends ResonanceEvent>(
 		eventType: string,
 		timeout?: number,
 	): Promise<T> {

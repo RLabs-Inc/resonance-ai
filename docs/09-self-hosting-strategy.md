@@ -1,12 +1,12 @@
-# Self-Hosting Strategy for GuardianAI MVP
+# Self-Hosting Strategy for ResonanceAI MVP
 
-**Document Purpose**: Define how Claude will use GuardianAI to improve GuardianAI itself
+**Document Purpose**: Define how Claude will use ResonanceAI to improve ResonanceAI itself
 **Audience**: Claude (implementation agent) and project stakeholders
 **Focus**: Bootstrap methodology and iterative self-improvement
 
 ## Self-Hosting Philosophy
 
-The ultimate test of GuardianAI MVP is whether Claude can effectively use it to improve the tool itself. This creates a virtuous cycle:
+The ultimate test of ResonanceAI MVP is whether Claude can effectively use it to improve the tool itself. This creates a virtuous cycle:
 
 1. **Build Minimal Tool** → Claude has basic capabilities
 2. **Use Tool on Itself** → Claude identifies what's missing/broken
@@ -19,18 +19,18 @@ This approach ensures the tool genuinely solves real problems rather than hypoth
 
 ### Phase 1: Initial Self-Analysis
 
-**Goal**: Understand the GuardianAI codebase using GuardianAI itself
+**Goal**: Understand the ResonanceAI codebase using ResonanceAI itself
 
 #### Step 1.1: Project Indexing
 
 ```bash
 # Claude runs this command
-guardian-ai index ./src --config ./guardian-ai.config.yaml
+resonance-ai index ./src --config ./resonance-ai.config.yaml
 ```
 
 **Expected Outcome**:
 
-- Complete project index of GuardianAI MVP codebase
+- Complete project index of ResonanceAI MVP codebase
 - Identification of code patterns used
 - Dependency graph showing service relationships
 - Architecture overview of the tool itself
@@ -46,9 +46,9 @@ guardian-ai index ./src --config ./guardian-ai.config.yaml
 
 ```bash
 # Claude analyzes the architecture
-guardian-ai query "What is the overall architecture of this project?"
-guardian-ai query "How do the services interact with each other?"
-guardian-ai query "What patterns are used for error handling?"
+resonance-ai query "What is the overall architecture of this project?"
+resonance-ai query "How do the services interact with each other?"
+resonance-ai query "What patterns are used for error handling?"
 ```
 
 **Expected Outcome**:
@@ -62,8 +62,8 @@ guardian-ai query "What patterns are used for error handling?"
 
 ```bash
 # Claude validates that the tool recognizes its own patterns
-guardian-ai query "Show me examples of the Service Pattern"
-guardian-ai query "What files implement the EventBus pattern?"
+resonance-ai query "Show me examples of the Service Pattern"
+resonance-ai query "What files implement the EventBus pattern?"
 ```
 
 **Expected Outcome**:
@@ -74,18 +74,18 @@ guardian-ai query "What files implement the EventBus pattern?"
 
 ### Phase 2: Self-Improvement Tasks
 
-**Goal**: Use GuardianAI to implement improvements to GuardianAI
+**Goal**: Use ResonanceAI to implement improvements to ResonanceAI
 
 #### Task 2.1: Enhanced Error Handling
 
 ```bash
 # Claude defines a self-improvement task
-guardian-ai context "Improve error handling in IndexingService with more specific error types and better recovery strategies"
+resonance-ai context "Improve error handling in IndexingService with more specific error types and better recovery strategies"
 ```
 
 **Implementation Process**:
 
-1. GuardianAI analyzes the IndexingService
+1. ResonanceAI analyzes the IndexingService
 2. Identifies current error handling patterns
 3. Suggests improvements based on best practices
 4. Claude implements changes following the brief
@@ -102,12 +102,12 @@ guardian-ai context "Improve error handling in IndexingService with more specifi
 
 ```bash
 # Claude targets performance improvements
-guardian-ai context "Optimize pattern matching performance by implementing caching and parallel processing"
+resonance-ai context "Optimize pattern matching performance by implementing caching and parallel processing"
 ```
 
 **Implementation Process**:
 
-1. GuardianAI identifies performance bottlenecks
+1. ResonanceAI identifies performance bottlenecks
 2. Suggests optimization strategies
 3. Provides examples of caching patterns from codebase
 4. Claude implements optimizations
@@ -124,12 +124,12 @@ guardian-ai context "Optimize pattern matching performance by implementing cachi
 
 ```bash
 # Claude improves the core context compilation
-guardian-ai context "Enhance context compilation to better identify related files and provide more accurate relevance scoring"
+resonance-ai context "Enhance context compilation to better identify related files and provide more accurate relevance scoring"
 ```
 
 **Implementation Process**:
 
-1. GuardianAI analyzes current context compilation logic
+1. ResonanceAI analyzes current context compilation logic
 2. Identifies areas for improvement
 3. Suggests algorithmic enhancements
 4. Claude implements improvements
@@ -144,13 +144,13 @@ guardian-ai context "Enhance context compilation to better identify related file
 
 ### Phase 3: Advanced Self-Hosting
 
-**Goal**: Use GuardianAI for complex architectural decisions and refactoring
+**Goal**: Use ResonanceAI for complex architectural decisions and refactoring
 
 #### Task 3.1: Plugin Architecture
 
 ```bash
 # Claude adds plugin system for language support
-guardian-ai context "Refactor language parsing to use a plugin architecture supporting multiple languages"
+resonance-ai context "Refactor language parsing to use a plugin architecture supporting multiple languages"
 ```
 
 **Expected Outcome**:
@@ -164,7 +164,7 @@ guardian-ai context "Refactor language parsing to use a plugin architecture supp
 
 ```bash
 # Claude enhances pattern recognition
-guardian-ai context "Implement machine learning-based pattern recognition to improve accuracy and discover new patterns"
+resonance-ai context "Implement machine learning-based pattern recognition to improve accuracy and discover new patterns"
 ```
 
 **Expected Outcome**:
@@ -176,7 +176,7 @@ guardian-ai context "Implement machine learning-based pattern recognition to imp
 
 ### Phase 4: Full Self-Sufficiency
 
-**Goal**: GuardianAI can handle its own evolution with minimal human intervention
+**Goal**: ResonanceAI can handle its own evolution with minimal human intervention
 
 #### Characteristics of Full Self-Sufficiency:
 
@@ -213,32 +213,32 @@ graph TD
 
 ```bash
 # Claude regularly assesses the tool's state
-guardian-ai query "What are the current limitations of this tool?"
-guardian-ai query "Which components have the highest complexity?"
-guardian-ai query "What patterns are most frequently used?"
+resonance-ai query "What are the current limitations of this tool?"
+resonance-ai query "Which components have the highest complexity?"
+resonance-ai query "What patterns are most frequently used?"
 ```
 
 #### Planning Improvements
 
 ```bash
 # Claude plans next improvements
-guardian-ai context "Reduce complexity in ContextService by extracting specialized components"
-guardian-ai brief "Reduce complexity in ContextService" --format markdown
+resonance-ai context "Reduce complexity in ContextService by extracting specialized components"
+resonance-ai brief "Reduce complexity in ContextService" --format markdown
 ```
 
 #### Implementing Changes
 
 ```bash
 # Claude uses the tool to implement changes
-guardian-ai validate --brief ./improvement-brief.json --code ./ContextService.ts
+resonance-ai validate --brief ./improvement-brief.json --code ./ContextService.ts
 ```
 
 #### Verifying Self-Hosting Capability
 
 ```bash
 # Claude tests that the tool still works on itself after changes
-guardian-ai index ./src
-guardian-ai context "Test that self-hosting still works after recent changes"
+resonance-ai index ./src
+resonance-ai context "Test that self-hosting still works after recent changes"
 ```
 
 ## Success Metrics for Self-Hosting

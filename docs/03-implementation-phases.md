@@ -1,4 +1,4 @@
-# Implementation Phases for GuardianAI MVP
+# Implementation Phases for ResonanceAI MVP
 
 **Document Purpose**: Step-by-step implementation plan tailored for Claude
 **Audience**: Claude (implementation agent)
@@ -34,8 +34,8 @@ Each phase has:
 
 ```bash
 # Create project structure
-mkdir guardian-ai-mvp
-cd guardian-ai-mvp
+mkdir resonance-ai-mvp
+cd resonance-ai-mvp
 npm init -y
 # Install dependencies and setup TypeScript
 ```
@@ -44,7 +44,7 @@ npm init -y
 
 - `package.json` with all dependencies
 - `tsconfig.json` with strict configuration
-- `guardian-ai.config.yaml` with default settings
+- `resonance-ai.config.yaml` with default settings
 - Basic project folder structure (src/, test/, templates/)
 
 #### 1.2 Core Types and Interfaces
@@ -206,7 +206,7 @@ describe('IndexingService', () => {
 
 ## Phase 3: Context System (Information Assembly)
 
-**Duration**: 2-3 sessions  
+**Duration**: 2-3 sessions
 **Goal**: Compile relevant context for specific development tasks
 
 ### Deliverables
@@ -413,13 +413,13 @@ describe('BriefingService', () => {
 ```typescript
 describe('CLI Interface', () => {
 	it('handles index command', async () => {
-		const result = await execCommand('guardian-ai index ./test-project');
+		const result = await execCommand('resonance-ai index ./test-project');
 		expect(result.exitCode).toBe(0);
 		expect(result.stdout).toContain('Indexing complete');
 	});
 
 	it('generates context via CLI', async () => {
-		const result = await execCommand('guardian-ai context "Add user auth"');
+		const result = await execCommand('resonance-ai context "Add user auth"');
 		expect(result.exitCode).toBe(0);
 		// Validate output format
 	});
@@ -431,14 +431,14 @@ describe('CLI Interface', () => {
 ## Phase 6: Self-Hosting (Bootstrap Complete)
 
 **Duration**: 2-4 sessions
-**Goal**: Use GuardianAI to improve GuardianAI itself
+**Goal**: Use ResonanceAI to improve ResonanceAI itself
 
 ### Deliverables
 
 #### 6.1 Self-Analysis
 
-- Run GuardianAI on its own codebase
-- Generate project index for guardian-ai-mvp
+- Run ResonanceAI on its own codebase
+- Generate project index for resonance-ai-mvp
 - Identify patterns in the MVP codebase
 - Document architectural decisions made
 
@@ -463,11 +463,11 @@ describe('CLI Interface', () => {
 
 - Plan next features based on self-hosting experience
 - Prioritize improvements that help Claude most
-- Design evolution path toward full GuardianAI
+- Design evolution path toward full ResonanceAI
 
 ### Success Criteria
 
-- [ ] GuardianAI can analyze its own codebase
+- [ ] ResonanceAI can analyze its own codebase
 - [ ] Claude can use the tool to make improvements to the tool
 - [ ] Self-generated briefs are helpful and accurate
 - [ ] Tool performance is acceptable during self-hosting

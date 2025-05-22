@@ -1,14 +1,14 @@
 /**
- * Error handling framework for GuardianAI MVP
+ * Error handling framework for ResonanceAI MVP
  *
  * Provides custom error classes for each domain with context and cause chaining.
  * Designed for Claude's debugging needs with clear, actionable error messages.
  */
 
 /**
- * Base error class for all GuardianAI errors
+ * Base error class for all ResonanceAI errors
  */
-export class GuardianError extends Error {
+export class ResonanceError extends Error {
 	readonly code: string;
 	readonly category: string;
 	public readonly context?: Record<string, any>;
@@ -16,7 +16,7 @@ export class GuardianError extends Error {
 
 	constructor(
 		message: string,
-		code: string = 'GUARDIAN_ERROR',
+		code: string = 'RESONANCE_ERROR',
 		context?: Record<string, any>,
 		cause?: Error,
 	) {
@@ -75,8 +75,8 @@ export class GuardianError extends Error {
 /**
  * Configuration-related errors
  */
-export class ConfigurationError extends GuardianError {
-	readonly category = 'configuration';
+export class ConfigurationError extends ResonanceError {
+	override readonly category = 'configuration';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Configuration Error: ${message}`, 'CONFIG_ERROR', context, cause);
 	}
@@ -85,8 +85,8 @@ export class ConfigurationError extends GuardianError {
 /**
  * File system operation errors
  */
-export class FileSystemError extends GuardianError {
-	readonly category = 'filesystem';
+export class FileSystemError extends ResonanceError {
+	override readonly category = 'filesystem';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`File System Error: ${message}`, 'FILESYSTEM_ERROR', context, cause);
 	}
@@ -95,8 +95,8 @@ export class FileSystemError extends GuardianError {
 /**
  * Project indexing errors
  */
-export class IndexingError extends GuardianError {
-	readonly category = 'indexing';
+export class IndexingError extends ResonanceError {
+	override readonly category = 'indexing';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Indexing Error: ${message}`, 'INDEXING_ERROR', context, cause);
 	}
@@ -105,8 +105,8 @@ export class IndexingError extends GuardianError {
 /**
  * File parsing errors
  */
-export class ParseError extends GuardianError {
-	readonly category = 'parsing';
+export class ParseError extends ResonanceError {
+	override readonly category = 'parsing';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Parse Error: ${message}`, 'PARSE_ERROR', context, cause);
 	}
@@ -115,8 +115,8 @@ export class ParseError extends GuardianError {
 /**
  * Context compilation errors
  */
-export class ContextError extends GuardianError {
-	readonly category = 'context';
+export class ContextError extends ResonanceError {
+	override readonly category = 'context';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Context Error: ${message}`, 'CONTEXT_ERROR', context, cause);
 	}
@@ -125,8 +125,8 @@ export class ContextError extends GuardianError {
 /**
  * Pattern recognition errors
  */
-export class PatternError extends GuardianError {
-	readonly category = 'pattern';
+export class PatternError extends ResonanceError {
+	override readonly category = 'pattern';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Pattern Error: ${message}`, 'PATTERN_ERROR', context, cause);
 	}
@@ -135,8 +135,8 @@ export class PatternError extends GuardianError {
 /**
  * Brief generation errors
  */
-export class BriefingError extends GuardianError {
-	readonly category = 'briefing';
+export class BriefingError extends ResonanceError {
+	override readonly category = 'briefing';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Briefing Error: ${message}`, 'BRIEFING_ERROR', context, cause);
 	}
@@ -145,8 +145,8 @@ export class BriefingError extends GuardianError {
 /**
  * Template processing errors
  */
-export class TemplateError extends GuardianError {
-	readonly category = 'template';
+export class TemplateError extends ResonanceError {
+	override readonly category = 'template';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Template Error: ${message}`, 'TEMPLATE_ERROR', context, cause);
 	}
@@ -155,8 +155,8 @@ export class TemplateError extends GuardianError {
 /**
  * Validation errors
  */
-export class ValidationError extends GuardianError {
-	readonly category = 'validation';
+export class ValidationError extends ResonanceError {
+	override readonly category = 'validation';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Validation Error: ${message}`, 'VALIDATION_ERROR', context, cause);
 	}
@@ -165,8 +165,8 @@ export class ValidationError extends GuardianError {
 /**
  * Interface/UI errors
  */
-export class InterfaceError extends GuardianError {
-	readonly category = 'interface';
+export class InterfaceError extends ResonanceError {
+	override readonly category = 'interface';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Interface Error: ${message}`, 'INTERFACE_ERROR', context, cause);
 	}
@@ -175,8 +175,8 @@ export class InterfaceError extends GuardianError {
 /**
  * Network/external service errors
  */
-export class NetworkError extends GuardianError {
-	readonly category = 'network';
+export class NetworkError extends ResonanceError {
+	override readonly category = 'network';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Network Error: ${message}`, 'NETWORK_ERROR', context, cause);
 	}
@@ -185,8 +185,8 @@ export class NetworkError extends GuardianError {
 /**
  * Performance/resource errors
  */
-export class PerformanceError extends GuardianError {
-	readonly category = 'performance';
+export class PerformanceError extends ResonanceError {
+	override readonly category = 'performance';
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
 		super(`Performance Error: ${message}`, 'PERFORMANCE_ERROR', context, cause);
 	}
@@ -196,24 +196,24 @@ export class PerformanceError extends GuardianError {
  * Centralized error handler
  */
 export class ErrorHandler {
-	private static loggers: Map<string, (error: GuardianError) => void> =
+	private static loggers: Map<string, (error: ResonanceError) => void> =
 		new Map();
 
 	/**
 	 * Handle any error with appropriate logging and context
 	 */
 	static handle(error: Error, context?: Record<string, any>): void {
-		if (error instanceof GuardianError) {
-			this.handleGuardianError(error);
+		if (error instanceof ResonanceError) {
+			this.handleResonanceError(error);
 		} else {
 			this.handleGenericError(error, context);
 		}
 	}
 
 	/**
-	 * Handle GuardianAI-specific errors
+	 * Handle ResonanceAI-specific errors
 	 */
-	private static handleGuardianError(error: GuardianError): void {
+	private static handleResonanceError(error: ResonanceError): void {
 		const logger = this.loggers.get(error.category);
 		if (logger) {
 			logger(error);
@@ -241,7 +241,7 @@ export class ErrorHandler {
 	/**
 	 * Default error logger
 	 */
-	private static defaultLogger(error: GuardianError): void {
+	private static defaultLogger(error: ResonanceError): void {
 		console.error(`[${error.category.toUpperCase()}] ${error.message}`);
 
 		if (error.context) {
@@ -265,7 +265,7 @@ export class ErrorHandler {
 	 */
 	static registerLogger(
 		category: string,
-		logger: (error: GuardianError) => void,
+		logger: (error: ResonanceError) => void,
 	): void {
 		this.loggers.set(category, logger);
 	}
@@ -273,7 +273,7 @@ export class ErrorHandler {
 	/**
 	 * Create an error with automatic context capture
 	 */
-	static createError<T extends GuardianError>(
+	static createError<T extends ResonanceError>(
 		ErrorClass: new (
 			message: string,
 			context?: Record<string, any>,
@@ -393,7 +393,7 @@ export const ErrorUtils = {
 	 */
 	assert(
 		condition: any,
-		ErrorClass: new (...args: any[]) => GuardianError,
+		ErrorClass: new (...args: any[]) => ResonanceError,
 		message: string,
 		context?: Record<string, any>,
 	): asserts condition {
@@ -420,11 +420,11 @@ export const ErrorUtils = {
 	 * Create a recoverable error that suggests solutions
 	 */
 	createRecoverableError(
-		ErrorClass: new (...args: any[]) => GuardianError,
+		ErrorClass: new (...args: any[]) => ResonanceError,
 		message: string,
 		suggestions: string[],
 		context?: Record<string, any>,
-	): GuardianError {
+	): ResonanceError {
 		return new ErrorClass(
 			`${message}\n\nSuggestions:\n${suggestions
 				.map(s => `- ${s}`)
@@ -436,7 +436,7 @@ export const ErrorUtils = {
 	/**
 	 * Check if an error is of a specific type
 	 */
-	isErrorType<T extends GuardianError>(
+	isErrorType<T extends ResonanceError>(
 		error: Error,
 		ErrorClass: new (...args: any[]) => T,
 	): error is T {
@@ -445,4 +445,4 @@ export const ErrorUtils = {
 };
 
 // Export specific error types for convenience
-export {GuardianError as BaseError};
+export {ResonanceError as BaseError};

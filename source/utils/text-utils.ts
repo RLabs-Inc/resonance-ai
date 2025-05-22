@@ -1,5 +1,5 @@
 /**
- * Text processing utilities for GuardianAI MVP
+ * Text processing utilities for ResonanceAI MVP
  *
  * Provides text analysis and processing functions optimized for Claude's needs.
  */

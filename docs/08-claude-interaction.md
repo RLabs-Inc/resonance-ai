@@ -1,12 +1,12 @@
 # Claude Interaction Protocol
 
-**Document Purpose**: Define how Claude interacts with GuardianAI MVP
+**Document Purpose**: Define how Claude interacts with ResonanceAI MVP
 **Audience**: Claude (implementation agent) and system architects
 **Focus**: Optimal interaction patterns for AI-driven development
 
 ## Core Interaction Philosophy
 
-GuardianAI MVP is designed specifically for Claude's cognitive patterns and limitations. Every interaction is optimized to:
+ResonanceAI MVP is designed specifically for Claude's cognitive patterns and limitations. Every interaction is optimized to:
 
 1. **Minimize Context Switching**: Provide all related information together
 2. **Maximize Relevance**: Only show what's needed for the current task
@@ -22,9 +22,9 @@ Claude asks the system for specific information:
 
 ```bash
 # CLI Examples
-guardian-ai query "What files implement user authentication?"
-guardian-ai query "Show me the patterns for error handling"
-guardian-ai query "What would be affected by changing UserService interface?"
+resonance-ai query "What files implement user authentication?"
+resonance-ai query "Show me the patterns for error handling"
+resonance-ai query "What would be affected by changing UserService interface?"
 
 # Expected response format optimized for Claude
 ```
@@ -72,7 +72,7 @@ guardian-ai query "What would be affected by changing UserService interface?"
 Claude requests context compilation for a specific development task:
 
 ```bash
-guardian-ai context "Add email verification to user registration"
+resonance-ai context "Add email verification to user registration"
 ```
 
 **Response Format for Claude**:
@@ -153,7 +153,7 @@ guardian-ai context "Add email verification to user registration"
 Claude requests a complete implementation brief:
 
 ```bash
-guardian-ai brief "Add email verification to user registration" --context ./context.json
+resonance-ai brief "Add email verification to user registration" --context ./context.json
 ```
 
 **Response Format for Claude**:
@@ -244,7 +244,7 @@ guardian-ai brief "Add email verification to user registration" --context ./cont
 Claude submits code for validation against brief:
 
 ```bash
-guardian-ai validate --brief ./brief.json --code ./UserService.ts
+resonance-ai validate --brief ./brief.json --code ./UserService.ts
 ```
 
 **Response Format for Claude**:
@@ -295,19 +295,19 @@ When Claude needs to understand the codebase before implementing:
 
 ```bash
 # Step 1: Explore architecture
-guardian-ai query "How is user management currently implemented?"
+resonance-ai query "How is user management currently implemented?"
 
 # Step 2: Find similar features
-guardian-ai query "Show me features that send emails"
+resonance-ai query "Show me features that send emails"
 
 # Step 3: Understand patterns
-guardian-ai query "What patterns are used for async operations?"
+resonance-ai query "What patterns are used for async operations?"
 
 # Step 4: Generate context
-guardian-ai context "Add email verification based on password reset pattern"
+resonance-ai context "Add email verification based on password reset pattern"
 
 # Step 5: Get implementation brief
-guardian-ai brief "Add email verification" --context ./context.json
+resonance-ai brief "Add email verification" --context ./context.json
 ```
 
 ### 2. Iterative Refinement
@@ -316,34 +316,34 @@ When Claude needs to refine understanding during implementation:
 
 ```bash
 # Start with brief
-guardian-ai brief "Add user roles and permissions"
+resonance-ai brief "Add user roles and permissions"
 
 # During implementation, need more detail
-guardian-ai query "How does AuthMiddleware currently work?"
+resonance-ai query "How does AuthMiddleware currently work?"
 
 # Validate partial implementation
-guardian-ai validate --brief ./brief.json --code ./partial-implementation.ts
+resonance-ai validate --brief ./brief.json --code ./partial-implementation.ts
 
 # Refine brief based on new understanding
-guardian-ai brief "Add user roles and permissions" --refine --feedback "Need more detail on middleware integration"
+resonance-ai brief "Add user roles and permissions" --refine --feedback "Need more detail on middleware integration"
 ```
 
 ### 3. Self-Improvement Workflow
 
-When Claude is working on GuardianAI itself:
+When Claude is working on ResonanceAI itself:
 
 ```bash
 # Analyze current system
-guardian-ai context "Improve pattern recognition accuracy"
+resonance-ai context "Improve pattern recognition accuracy"
 
 # Understand what needs to change
-guardian-ai query "Which files implement pattern detection?"
+resonance-ai query "Which files implement pattern detection?"
 
 # Generate brief for self-improvement
-guardian-ai brief "Add confidence scoring to pattern detection"
+resonance-ai brief "Add confidence scoring to pattern detection"
 
 # Validate self-implemented changes
-guardian-ai validate --brief ./self-improvement-brief.json --code ./PatternMatcher.ts
+resonance-ai validate --brief ./self-improvement-brief.json --code ./PatternMatcher.ts
 ```
 
 ## TUI Interaction Patterns
@@ -480,7 +480,7 @@ When the system can't provide complete information:
 	"message": "Insufficient information for task",
 	"recovery": [
 		"Try more specific task description",
-		"Run 'guardian-ai index' to refresh project understanding",
+		"Run 'resonance-ai index' to refresh project understanding",
 		"Check if relevant files exist in project"
 	]
 }

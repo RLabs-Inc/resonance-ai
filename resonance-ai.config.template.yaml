@@ -1,10 +1,11 @@
-# GuardianAI MVP Configuration
+# Resonance-AI Configuration Template
+# Copy this file to resonance-ai.config.yaml and fill in your values
 # This configuration is optimized for Claude's development workflow
 
 # Project settings
 project:
-  name: 'guardian-ai-mvp'
-  rootPath: './source'
+  name: 'resonance-ai'
+  rootPath: '/Users/rusty/Documents/Projects/AI/Tools/GuardianAI'
   exclude:
     - 'node_modules'
     - 'dist'
@@ -72,3 +73,19 @@ performance:
   cacheSize: 100
   maxMemoryMB: 512
   gcIntervalMs: 30000
+
+# API Configuration for Self-Communication
+api:
+  anthropic:
+    # REQUIRED: Set your Anthropic API key here
+    # Get your API key from: https://console.anthropic.com/
+    apiKey: "YOUR_ANTHROPIC_API_KEY_HERE"
+    model: "claude-3-5-sonnet-20241022"
+    maxTokens: 4096
+    temperature: 0.1
+  
+  # Enable Resonance-AI to call itself for advanced reasoning
+  selfCommunication:
+    enabled: true
+    endpoint: "https://api.anthropic.com/v1/messages"
+    systemPrompt: "You are Resonance-AI, helping your past self with development tasks."

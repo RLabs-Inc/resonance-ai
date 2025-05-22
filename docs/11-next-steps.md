@@ -1,4 +1,4 @@
-# Next Steps for GuardianAI MVP
+# Next Steps for ResonanceAI MVP
 
 **Document Purpose**: Define the immediate path forward from documentation to working system
 **Audience**: Claude (implementation agent) and project stakeholders
@@ -8,7 +8,7 @@
 
 ### 1. Project Scaffolding
 
-**Action**: Create the GuardianAI MVP project structure
+**Action**: Create the ResonanceAI MVP project structure
 **Duration**: 30 minutes
 **Owner**: Human (you)
 
@@ -16,8 +16,8 @@
 
 ```bash
 # Create project directory
-mkdir guardian-ai-mvp
-cd guardian-ai-mvp
+mkdir resonance-ai-mvp
+cd resonance-ai-mvp
 
 # Initialize project
 npm init -y
@@ -65,7 +65,7 @@ mkdir -p docs/api
 
 ```bash
 # Copy documentation
-cp -r /path/to/sveltui/docs/guardian-ai-mvp ./docs/mvp
+cp -r /path/to/sveltui/docs/resonance-ai-mvp ./docs/mvp
 
 # Create README with quick start guide
 # Create CHANGELOG.md for tracking progress
@@ -82,7 +82,7 @@ cp -r /path/to/sveltui/docs/guardian-ai-mvp ./docs/mvp
 
 **Files to Create**:
 
-- `guardian-ai.config.yaml` - Default configuration
+- `resonance-ai.config.yaml` - Default configuration
 - `tsconfig.json` - TypeScript configuration
 - `jest.config.js` - Testing configuration
 - `package.json` scripts section
@@ -197,7 +197,7 @@ describe('Event System', () => {
 
 **Testing Strategy**:
 
-- Test with GuardianAI MVP's own codebase
+- Test with ResonanceAI MVP's own codebase
 - Test with SvelTUI project
 - Include error handling tests
 - Performance baseline tests
@@ -298,13 +298,13 @@ describe('Event System', () => {
 
 ### Session 15: Initial Self-Analysis
 
-**Goal**: Use GuardianAI on its own codebase
+**Goal**: Use ResonanceAI on its own codebase
 **Duration**: 1-2 hours
 **Owner**: Claude
 
 **Tasks**:
 
-- Index GuardianAI MVP codebase
+- Index ResonanceAI MVP codebase
 - Generate context for self-improvement tasks
 - Validate tool recognizes its own patterns
 
@@ -412,7 +412,7 @@ describe('Event System', () => {
 - Node.js 18+ with TypeScript support
 - Git for version control
 - VS Code or similar IDE with TypeScript support
-- Access to test projects (GuardianAI MVP, SvelTUI)
+- Access to test projects (ResonanceAI MVP, SvelTUI)
 
 ### External Dependencies
 

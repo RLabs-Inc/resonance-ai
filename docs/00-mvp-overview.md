@@ -1,4 +1,4 @@
-# GuardianAI MVP - Implementation Overview
+# ResonanceAI MVP - Implementation Overview
 
 **Document Purpose**: Master implementation guide tailored for Claude's development workflow
 **Target**: Minimal viable AI coding tool that Claude can use to improve itself
@@ -8,7 +8,7 @@
 
 This MVP exists to solve ONE fundamental problem: **Give Claude the context it needs to write integrated, consistent code**.
 
-Everything else is secondary. We're not building the full GuardianAI vision yet - we're building the minimum tool that lets Claude work effectively on codebases.
+Everything else is secondary. We're not building the full ResonanceAI vision yet - we're building the minimum tool that lets Claude work effectively on codebases.
 
 ## MVP Success Criteria
 
@@ -85,7 +85,7 @@ Everything else is secondary. We're not building the full GuardianAI vision yet 
 ## File Structure Overview
 
 ```
-guardian-ai-mvp/
+resonance-ai-mvp/
 ├── 00-mvp-overview.md              # This file - master overview
 ├── 01-architecture-decisions.md    # Core architectural choices
 ├── 02-technical-specifications.md  # Detailed technical specs
@@ -97,7 +97,7 @@ guardian-ai-mvp/
 ├── 08-claude-interaction.md        # How Claude interacts with the system
 ├── 09-self-hosting-strategy.md     # How Claude uses tool on itself
 ├── 10-lessons-from-v1.md          # What we learned from the failed attempt
-└── 11-next-steps.md               # Evolution path toward full GuardianAI
+└── 11-next-steps.md               # Evolution path toward full ResonanceAI
 ```
 
 ## Development Workflow

@@ -1,10 +1,10 @@
-# CLAUDE.md - GuardianAI MVP
+# CLAUDE.md - ResonanceAI MVP
 
-This file provides guidance to Claude Code (claude.ai/code) when working with GuardianAI MVP. This project is unique because **it's built specifically for Claude, by Claude, to help Claude be more effective at software development**.
+This file provides guidance to Claude Code (claude.ai/code) when working with ResonanceAI MVP. This project is unique because **it's built specifically for Claude, by Claude, to help Claude be more effective at software development**.
 
 ## Project Vision: A Development Tool Built FOR AI
 
-GuardianAI MVP represents a fundamentally new approach to AI-assisted development: instead of forcing AI to adapt to human tools, we're building a tool specifically designed around how AI actually thinks and works.
+ResonanceAI MVP represents a fundamentally new approach to AI-assisted development: instead of forcing AI to adapt to human tools, we're building a tool specifically designed around how AI actually thinks and works.
 
 **Core Philosophy**: Claude is both the primary user AND the primary developer of this tool. Every design decision is made to optimize Claude's development experience.
 
@@ -15,51 +15,51 @@ This tool solves the exact problems Claude faces during software development:
 ### 1. Context Fragmentation
 
 **Problem**: Claude loses architectural understanding across sessions and can't see relationships between distant code
-**Solution**: GuardianAI maintains persistent understanding of codebase structure, patterns, and relationships
+**Solution**: ResonanceAI maintains persistent understanding of codebase structure, patterns, and relationships
 
 ### 2. Pattern Consistency
 
 **Problem**: Claude gradually drifts away from established patterns during long development sessions
-**Solution**: GuardianAI identifies and enforces codebase-specific patterns through explicit guidance
+**Solution**: ResonanceAI identifies and enforces codebase-specific patterns through explicit guidance
 
 ### 3. Integration Complexity
 
 **Problem**: Claude struggles to properly integrate new code with existing infrastructure
-**Solution**: GuardianAI provides detailed implementation briefs showing exactly how to integrate with existing systems
+**Solution**: ResonanceAI provides detailed implementation briefs showing exactly how to integrate with existing systems
 
 ### 4. Architectural Awareness Loss
 
-**Problem**: Claude loses sight of architectural constraints while focusing on implementation details  
-**Solution**: GuardianAI maintains architectural context and provides guidance that respects system boundaries
+**Problem**: Claude loses sight of architectural constraints while focusing on implementation details
+**Solution**: ResonanceAI maintains architectural context and provides guidance that respects system boundaries
 
-## How Claude Uses GuardianAI
+## How Claude Uses ResonanceAI
 
 ### Development Workflow
 
 ```bash
 # 1. Understand the codebase
-guardian-ai query "How is user authentication currently implemented?"
+resonance-ai query "How is user authentication currently implemented?"
 
 # 2. Get context for a task
-guardian-ai context "Add email verification to user registration"
+resonance-ai context "Add email verification to user registration"
 
 # 3. Generate implementation guidance
-guardian-ai brief "Add email verification" --context ./context.json
+resonance-ai brief "Add email verification" --context ./context.json
 
 # 4. Validate implementation
-guardian-ai validate --brief ./brief.json --code ./UserService.ts
+resonance-ai validate --brief ./brief.json --code ./UserService.ts
 
 # 5. Use for continuous improvement
-guardian-ai context "Improve error handling in IndexingService"
+resonance-ai context "Improve error handling in IndexingService"
 ```
 
 ### Self-Hosting Bootstrap Strategy
 
-The most important aspect of GuardianAI MVP is that **Claude uses it to build itself**:
+The most important aspect of ResonanceAI MVP is that **Claude uses it to build itself**:
 
 1. **Phase 1-2**: Build minimal indexing and context capabilities
 2. **Phase 3**: Start using the tool on its own codebase
-3. **Phase 4-6**: All further development uses GuardianAI to improve GuardianAI
+3. **Phase 4-6**: All further development uses ResonanceAI to improve ResonanceAI
 4. **Beyond MVP**: Tool evolves through self-application
 
 This creates a virtuous cycle where every limitation Claude encounters becomes immediate feedback for the next improvement.
@@ -121,44 +121,44 @@ Every response follows these Claude-optimization principles:
 
 ```bash
 # Understand architecture
-guardian-ai query "What is the overall architecture of this project?"
-guardian-ai query "How do services interact with each other?"
+resonance-ai query "What is the overall architecture of this project?"
+resonance-ai query "How do services interact with each other?"
 
 # Find patterns
-guardian-ai query "Show me examples of error handling patterns"
-guardian-ai query "What files implement the Service pattern?"
+resonance-ai query "Show me examples of error handling patterns"
+resonance-ai query "What files implement the Service pattern?"
 
 # Understand relationships
-guardian-ai query "What would be affected by changing UserService interface?"
-guardian-ai query "Which components depend on the database connection?"
+resonance-ai query "What would be affected by changing UserService interface?"
+resonance-ai query "Which components depend on the database connection?"
 ```
 
 ### Context Commands
 
 ```bash
 # Task-specific context compilation
-guardian-ai context "Add user roles and permissions system"
-guardian-ai context "Refactor IndexingService to use plugin architecture"
-guardian-ai context "Improve performance of pattern matching"
+resonance-ai context "Add user roles and permissions system"
+resonance-ai context "Refactor IndexingService to use plugin architecture"
+resonance-ai context "Improve performance of pattern matching"
 
 # Scope-specific analysis
-guardian-ai context "Understand authentication flow" --scope src/auth
-guardian-ai context "Database layer patterns" --scope src/data
+resonance-ai context "Understand authentication flow" --scope src/auth
+resonance-ai context "Database layer patterns" --scope src/data
 ```
 
 ### Briefing Commands
 
 ```bash
 # Implementation guidance generation
-guardian-ai brief "Add email verification" --context ./context.json
-guardian-ai brief "Optimize pattern detection" --format markdown
+resonance-ai brief "Add email verification" --context ./context.json
+resonance-ai brief "Optimize pattern detection" --format markdown
 
 # Validation and feedback
-guardian-ai validate --brief ./brief.json --code ./implementation.ts
-guardian-ai refine-brief ./brief.json --feedback "Need more database examples"
+resonance-ai validate --brief ./brief.json --code ./implementation.ts
+resonance-ai refine-brief ./brief.json --feedback "Need more database examples"
 ```
 
-## Development Principles for GuardianAI
+## Development Principles for ResonanceAI
 
 ### 1. Claude-First Design
 
@@ -170,7 +170,7 @@ Every feature is designed with Claude's cognitive patterns in mind:
 
 ### 2. Simplicity Over Elegance
 
-Based on lessons from GuardianAI v1:
+Based on lessons from ResonanceAI v1:
 
 - Simple working solutions beat elegant theoretical ones
 - Build concrete features before abstract frameworks
@@ -178,7 +178,7 @@ Based on lessons from GuardianAI v1:
 
 ### 3. Test with Real Scenarios
 
-- Use GuardianAI's own codebase as primary test case
+- Use ResonanceAI's own codebase as primary test case
 - Test with SvelTUI project for validation
 - Include edge cases from real-world projects
 - Measure effectiveness, not just functionality
@@ -207,11 +207,11 @@ Based on lessons from GuardianAI v1:
 
 - [ ] Phase 4: Briefing system (implementation guidance generation)
 - [ ] Phase 5: Interface layer (CLI and TUI optimized for Claude)
-- [ ] Phase 6: Self-hosting (using GuardianAI to improve GuardianAI)
+- [ ] Phase 6: Self-hosting (using ResonanceAI to improve ResonanceAI)
 
 ### 🎯 Success Criteria
 
-GuardianAI MVP is successful when:
+ResonanceAI MVP is successful when:
 
 - Claude can use it to work on its own codebase effectively
 - Generated briefs help Claude write more consistent, integrated code
@@ -229,7 +229,7 @@ GuardianAI MVP is successful when:
 
 ## Collaborative Development Philosophy
 
-GuardianAI MVP represents a unique collaboration between human vision and AI capability:
+ResonanceAI MVP represents a unique collaboration between human vision and AI capability:
 
 - **Human Partner**: Provides vision, architectural guidance, and strategic direction
 - **Claude**: Provides implementation, testing, validation, and user feedback
@@ -265,7 +265,7 @@ docs/                 # Documentation (including this file)
 
 ## Future Evolution
 
-Once the MVP is working, GuardianAI will evolve through self-application:
+Once the MVP is working, ResonanceAI will evolve through self-application:
 
 - New features emerge from real usage patterns
 - Performance optimizations target actual bottlenecks

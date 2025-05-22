@@ -1,5 +1,5 @@
 /**
- * File system utilities for GuardianAI MVP
+ * File system utilities for ResonanceAI MVP
  *
  * Provides safe, error-handled file operations optimized for Claude's needs.
  */
