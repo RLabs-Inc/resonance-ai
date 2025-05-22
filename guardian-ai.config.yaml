@@ -1,0 +1,74 @@
+# GuardianAI MVP Configuration
+# This configuration is optimized for Claude's development workflow
+
+# Project settings
+project:
+  name: 'guardian-ai-mvp'
+  rootPath: './source'
+  exclude:
+    - 'node_modules'
+    - 'dist'
+    - 'build'
+    - '.git'
+    - '*.log'
+    - 'coverage'
+    - '.nyc_output'
+    - '*.tmp'
+  include:
+    - '**/*.ts'
+    - '**/*.tsx'
+    - '**/*.js'
+    - '**/*.jsx'
+    - '**/*.json'
+    - '**/*.md'
+    - '**/*.yaml'
+    - '**/*.yml'
+
+# Indexing configuration
+indexing:
+  languages: ['typescript', 'javascript']
+  maxFileSize: 1000000 # 1MB
+  debounceMs: 500
+  parseComments: true
+  generateHashes: true
+
+# Context compilation settings
+context:
+  maxFiles: 20
+  maxLinesPerFile: 200
+  relevanceThreshold: 0.3
+  includePatterns: true
+  includeArchitecture: true
+  includeTests: false
+
+# Pattern recognition settings
+patterns:
+  autoDetect: true
+  customPatterns: './patterns'
+  confidenceThreshold: 0.7
+  maxPatterns: 50
+
+# Brief generation settings
+briefing:
+  templatePath: './templates'
+  includeExamples: true
+  includeConstraints: true
+  verboseGuidance: false
+  maxBriefLength: 10000
+
+# Interface settings (optimized for Claude)
+interface:
+  theme: 'dark'
+  verbose: false
+  autoRefresh: true
+  shortcuts:
+    switchView: 'tab'
+    refresh: 'r'
+    help: '?'
+    quit: 'q'
+
+# Performance settings
+performance:
+  cacheSize: 100
+  maxMemoryMB: 512
+  gcIntervalMs: 30000
