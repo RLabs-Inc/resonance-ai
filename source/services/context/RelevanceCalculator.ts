@@ -275,33 +275,33 @@ export class RelevanceCalculator {
   ): string[] {
     const reasons: string[] = [];
 
-    if (scores.keyword > 0.7) {
+    if (scores['keyword'] && scores['keyword'] > 0.7) {
       reasons.push('Strong keyword match with task requirements');
-    } else if (scores.keyword > 0.3) {
+    } else if (scores['keyword'] && scores['keyword'] > 0.3) {
       reasons.push('Partial keyword match');
     }
 
-    if (scores.pattern > 0.5) {
+    if (scores['pattern'] && scores['pattern'] > 0.5) {
       reasons.push('Contains relevant code patterns');
     }
 
-    if (scores.fileType === 1) {
+    if (scores['fileType'] && scores['fileType'] === 1) {
       reasons.push('Matches target file type');
     }
 
-    if (scores.dependency > 0.5) {
+    if (scores['dependency'] && scores['dependency'] > 0.5) {
       reasons.push('Has relevant dependencies');
     }
 
-    if (scores.recency > 0.8) {
+    if (scores['recency'] && scores['recency'] > 0.8) {
       reasons.push('Recently modified');
     }
 
-    if (scores.complexity > 0.8) {
+    if (scores['complexity'] && scores['complexity'] > 0.8) {
       reasons.push('Optimal complexity level');
     }
 
-    if (scores.importance > 0.5) {
+    if (scores['importance'] && scores['importance'] > 0.5) {
       reasons.push('Important architectural component');
     }
 

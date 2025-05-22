@@ -8,17 +8,24 @@
 /**
  * Base error class for all GuardianAI errors
  */
-export abstract class GuardianError extends Error {
-	abstract readonly code: string;
-	abstract readonly category: string;
+export class GuardianError extends Error {
+	readonly code: string;
+	readonly category: string;
+	public readonly context?: Record<string, any>;
+	public override readonly cause?: Error;
 
 	constructor(
 		message: string,
-		public readonly context?: Record<string, any>,
-		public override readonly cause?: Error,
+		code: string = 'GUARDIAN_ERROR',
+		context?: Record<string, any>,
+		cause?: Error,
 	) {
 		super(message);
 		this.name = this.constructor.name;
+		this.code = code;
+		this.category = 'general';
+		this.context = context;
+		this.cause = cause;
 
 		// Maintain proper stack trace
 		if (Error.captureStackTrace) {
@@ -69,11 +76,9 @@ export abstract class GuardianError extends Error {
  * Configuration-related errors
  */
 export class ConfigurationError extends GuardianError {
-	readonly code = 'CONFIG_ERROR';
 	readonly category = 'configuration';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Configuration Error: ${message}`, context, cause);
+		super(`Configuration Error: ${message}`, 'CONFIG_ERROR', context, cause);
 	}
 }
 
@@ -81,11 +86,9 @@ export class ConfigurationError extends GuardianError {
  * File system operation errors
  */
 export class FileSystemError extends GuardianError {
-	readonly code = 'FILESYSTEM_ERROR';
 	readonly category = 'filesystem';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`File System Error: ${message}`, context, cause);
+		super(`File System Error: ${message}`, 'FILESYSTEM_ERROR', context, cause);
 	}
 }
 
@@ -93,11 +96,9 @@ export class FileSystemError extends GuardianError {
  * Project indexing errors
  */
 export class IndexingError extends GuardianError {
-	readonly code = 'INDEXING_ERROR';
 	readonly category = 'indexing';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Indexing Error: ${message}`, context, cause);
+		super(`Indexing Error: ${message}`, 'INDEXING_ERROR', context, cause);
 	}
 }
 
@@ -105,11 +106,9 @@ export class IndexingError extends GuardianError {
  * File parsing errors
  */
 export class ParseError extends GuardianError {
-	readonly code = 'PARSE_ERROR';
 	readonly category = 'parsing';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Parse Error: ${message}`, context, cause);
+		super(`Parse Error: ${message}`, 'PARSE_ERROR', context, cause);
 	}
 }
 
@@ -117,11 +116,9 @@ export class ParseError extends GuardianError {
  * Context compilation errors
  */
 export class ContextError extends GuardianError {
-	readonly code = 'CONTEXT_ERROR';
 	readonly category = 'context';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Context Error: ${message}`, context, cause);
+		super(`Context Error: ${message}`, 'CONTEXT_ERROR', context, cause);
 	}
 }
 
@@ -129,11 +126,9 @@ export class ContextError extends GuardianError {
  * Pattern recognition errors
  */
 export class PatternError extends GuardianError {
-	readonly code = 'PATTERN_ERROR';
 	readonly category = 'pattern';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Pattern Error: ${message}`, context, cause);
+		super(`Pattern Error: ${message}`, 'PATTERN_ERROR', context, cause);
 	}
 }
 
@@ -141,11 +136,9 @@ export class PatternError extends GuardianError {
  * Brief generation errors
  */
 export class BriefingError extends GuardianError {
-	readonly code = 'BRIEFING_ERROR';
 	readonly category = 'briefing';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Briefing Error: ${message}`, context, cause);
+		super(`Briefing Error: ${message}`, 'BRIEFING_ERROR', context, cause);
 	}
 }
 
@@ -153,11 +146,9 @@ export class BriefingError extends GuardianError {
  * Template processing errors
  */
 export class TemplateError extends GuardianError {
-	readonly code = 'TEMPLATE_ERROR';
 	readonly category = 'template';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Template Error: ${message}`, context, cause);
+		super(`Template Error: ${message}`, 'TEMPLATE_ERROR', context, cause);
 	}
 }
 
@@ -165,11 +156,9 @@ export class TemplateError extends GuardianError {
  * Validation errors
  */
 export class ValidationError extends GuardianError {
-	readonly code = 'VALIDATION_ERROR';
 	readonly category = 'validation';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Validation Error: ${message}`, context, cause);
+		super(`Validation Error: ${message}`, 'VALIDATION_ERROR', context, cause);
 	}
 }
 
@@ -177,11 +166,9 @@ export class ValidationError extends GuardianError {
  * Interface/UI errors
  */
 export class InterfaceError extends GuardianError {
-	readonly code = 'INTERFACE_ERROR';
 	readonly category = 'interface';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Interface Error: ${message}`, context, cause);
+		super(`Interface Error: ${message}`, 'INTERFACE_ERROR', context, cause);
 	}
 }
 
@@ -189,11 +176,9 @@ export class InterfaceError extends GuardianError {
  * Network/external service errors
  */
 export class NetworkError extends GuardianError {
-	readonly code = 'NETWORK_ERROR';
 	readonly category = 'network';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Network Error: ${message}`, context, cause);
+		super(`Network Error: ${message}`, 'NETWORK_ERROR', context, cause);
 	}
 }
 
@@ -201,11 +186,9 @@ export class NetworkError extends GuardianError {
  * Performance/resource errors
  */
 export class PerformanceError extends GuardianError {
-	readonly code = 'PERFORMANCE_ERROR';
 	readonly category = 'performance';
-
 	constructor(message: string, context?: Record<string, any>, cause?: Error) {
-		super(`Performance Error: ${message}`, context, cause);
+		super(`Performance Error: ${message}`, 'PERFORMANCE_ERROR', context, cause);
 	}
 }
 

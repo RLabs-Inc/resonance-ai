@@ -7,10 +7,10 @@
 
 export interface ProjectIndex {
 	metadata: ProjectMetadata;
-	files: Map<string, FileInfo>;
+	files: Record<string, FileInfo>;
 	dependencies: DependencyGraph;
 	patterns: Pattern[];
-	exports: Map<string, ExportInfo[]>;
+	exports: Record<string, ExportInfo[]>;
 }
 
 export interface ProjectMetadata {
@@ -26,24 +26,26 @@ export interface ProjectMetadata {
 export interface FileInfo {
 	path: string;
 	relativePath: string;
+	name: string;
 	type: string;
 	size: number;
 	lines: number;
-	lastModified: Date;
+	lastModified?: Date;
 	checksum: string;
+	content?: string;
 
 	// Parsed structure
-	imports: ImportInfo[];
-	exports: ExportInfo[];
-	functions: FunctionInfo[];
-	classes: ClassInfo[];
-	interfaces: InterfaceInfo[];
-	types: TypeInfo[];
+	imports?: string[];
+	exports?: string[];
+	functions?: string[];
+	classes?: ClassInfo[];
+	interfaces?: InterfaceInfo[];
+	types?: TypeInfo[];
 
 	// Analysis results
-	patterns: PatternMatch[];
-	complexity: ComplexityMetrics;
-	dependencies: string[];
+	patterns?: ContextPattern[];
+	complexity?: number;
+	dependencies?: string[];
 }
 
 export interface ImportInfo {
@@ -184,7 +186,7 @@ export interface PatternIndicator {
 }
 
 export interface DependencyGraph {
-	nodes: Map<string, DependencyNode>;
+	nodes: Record<string, DependencyNode>;
 	edges: DependencyEdge[];
 	cycles: string[][];
 	metrics: DependencyMetrics;
@@ -228,19 +230,15 @@ export interface TaskDefinition {
 	constraints: string[];
 }
 
-export interface RelevantFile {
-	path: string;
-	relevance: number;
-	reason: string;
-	sections: CodeSection[];
-	patterns: string[];
-}
 
 export interface CodeSection {
-	title: string;
+	type: string;
+	name: string;
 	content: string;
-	lines: [number, number];
-	importance: number;
+	startLine: number;
+	endLine: number;
+	relevance: number;
+	description: string;
 }
 
 export interface RelevantPattern {
@@ -547,6 +545,63 @@ export interface BriefCustomization {
 	focusAreas?: string[];
 	excludePatterns?: string[];
 	additionalContext?: string;
+}
+
+// Context System Types
+export interface ContextRequest {
+	description: string;
+	scope?: string;
+	taskType?: string;
+	constraints?: string[];
+	examples?: string[];
+}
+
+export interface ContextPackage {
+	id: string;
+	request: ContextRequest;
+	summary: string;
+	relevantFiles: RelevantFile[];
+	relationships: Record<string, string[]>;
+	detectedPatterns: ContextPattern[];
+	implementationGuidance: string;
+	metadata: {
+		createdAt: Date;
+		compilationTime: number;
+		totalFilesAnalyzed: number;
+		filesIncluded: number;
+		confidence: number;
+	};
+}
+
+export interface RelevantFile {
+	file: string;
+	relevance: number;
+	reason: string;
+	keyElements: string[];
+	patterns: ContextPattern[];
+}
+
+export interface RelevanceScore {
+	file: string;
+	score: number;
+	factors: Record<string, number>;
+	confidence: number;
+	reasons: string[];
+}
+
+export interface ContextPattern {
+	type: string;
+	name: string;
+	confidence: number;
+}
+
+export interface ExtractionCriteria {
+	functions?: string[];
+	classes?: string[];
+	interfaces?: string[];
+	exports?: string[];
+	keywords?: string[];
+	lineRanges?: Array<{ start: number; end: number }>;
 }
 
 // Language parser types
